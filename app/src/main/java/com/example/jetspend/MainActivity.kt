@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetspend.ui.theme.JetspendTheme
@@ -57,6 +58,11 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
     val wydatki by remember { derivedStateOf { viewModel.wydatki } }
     val suma by remember { derivedStateOf { viewModel.sumWydatki() } }
 
+    var nazwa by remember { mutableStateOf("")}
+    var kwota by remember { mutableStateOf("") }
+    var kategoria by remember { mutableStateOf("") }
+    var menuToggle by remember { mutableStateOf(false)}
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -66,18 +72,70 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Jetspend")
-            Spacer(modifier = Modifier.height(20.dp))
-            Text("Łączna suma wydatków: $suma")
-            Spacer(modifier = Modifier.height(20.dp))
+            if(!menuToggle){
+                Text("Jetspend", fontSize = 40.sp)
+                Spacer(modifier = Modifier.height(20.dp))
+                Text("Łączna suma wydatków: $suma")
+                Spacer(modifier = Modifier.height(20.dp))
 
-            ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
+                ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(onClick = {
-                viewModel.addWydatki(Wydatki(id = wydatki.size, name = "Sample", amount = 10.0, category = "Food"))
-            }) {
-                Text("Dodaj nowy wpis")
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(onClick = { menuToggle = true }) {
+                    Text("Dodaj nowy wpis")
+                }
+            }else{
+                TextField(
+                    value = nazwa,
+                    onValueChange = { nazwa = it },
+                    label = { Text("Nazwa") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = kwota,
+                    onValueChange = { kwota = it },
+                    label = { Text("Kwota") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = kategoria,
+                    onValueChange = { kategoria = it },
+                    label = { Text("Kategoria") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row{
+                    Column {
+                        Button(onClick = {
+                            if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
+                                val amount = kwota.toDoubleOrNull()
+                                if (amount != null) {
+                                    viewModel.addWydatki(
+                                        Wydatki(
+                                            id = wydatki.size,
+                                            name = nazwa,
+                                            amount = amount,
+                                            category = kategoria
+                                        )
+                                    )
+                                    nazwa = ""
+                                    kwota = ""
+                                    kategoria = ""
+                                    menuToggle = false
+                                }
+                            }
+                        }) {
+                            Text("Dodaj")
+                        }
+                    }
+                    Column{
+                        Button(onClick = {menuToggle = false}){
+                            Text("Wróć")
+                        }
+                    }
+                }
             }
         }
     }
