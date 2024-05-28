@@ -7,10 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,6 +88,8 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     Text("Dodaj nowy wpis")
                 }
             }else{
+                Text("Wpisz do kosztorysu", fontSize = 30.sp, textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.height(20.dp))
                 TextField(
                     value = nazwa,
                     onValueChange = { nazwa = it },
@@ -94,9 +99,12 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = kwota,
-                    onValueChange = { kwota = it },
+                    onValueChange = { value -> kwota = value.filter { it.isDigit() } },
                     label = { Text("Kwota") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.NumberPassword
+                    ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
@@ -107,7 +115,9 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row{
-                    Column {
+                    Column(
+                        modifier = Modifier.padding(10.dp)
+                    ) {
                         Button(onClick = {
                             if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
                                 val amount = kwota.toDoubleOrNull()
@@ -130,7 +140,9 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                             Text("Dodaj")
                         }
                     }
-                    Column{
+                    Column(
+                        modifier = Modifier.padding(10.dp)
+                    ){
                         Button(onClick = {menuToggle = false}){
                             Text("Wróć")
                         }
