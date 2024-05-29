@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,7 +23,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetspend.ui.theme.JetspendTheme
 
-data class Wydatki(val id: Int, val name: String, val amount: Double, val category: String)
+data class Wydatki(val id: Int, val name: String, val amount: Int, val category: String)
 
 class WydatkiViewModel : ViewModel() {
     private var _wydatki = mutableStateListOf<Wydatki>()
@@ -35,7 +37,7 @@ class WydatkiViewModel : ViewModel() {
         _wydatki.remove(wydatek)
     }
 
-    fun sumWydatki(): Double {
+    fun sumWydatki(): Int {
         return _wydatki.sumOf { it.amount }
     }
 }
@@ -78,11 +80,9 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             if(!menuToggle){
                 Text("Jetspend", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("Łączna suma wydatków: $suma")
-                Spacer(modifier = Modifier.height(20.dp))
-
+                HeaderRow()
                 ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
-
+                FooterRow(suma)
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(onClick = { menuToggle = true }) {
                     Text("Dodaj nowy wpis")
@@ -120,7 +120,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     ) {
                         Button(onClick = {
                             if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
-                                val amount = kwota.toDoubleOrNull()
+                                val amount = kwota.toIntOrNull()
                                 if (amount != null) {
                                     viewModel.addWydatki(
                                         Wydatki(
@@ -154,6 +154,55 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
 }
 
 @Composable
+fun HeaderRow() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Nazwa",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = "Kwota",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = "Kategoria",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = "Usuń",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun FooterRow(suma: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Łączna suma Twoich wydatków: $suma.",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
 fun ListaWydatkow(wydatki: List<Wydatki>, onRemoveWydatki: (Wydatki) -> Unit) {
     LazyColumn {
         items(wydatki) { wydatek ->
@@ -171,13 +220,23 @@ fun ExpenseItem(wydatek: Wydatki, onRemoveWydatki: (Wydatki) -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
-            Text(text = wydatek.name)
-            Text(text = "${wydatek.amount}")
-            Text(text = wydatek.category)
-        }
-        Button(onClick = { onRemoveWydatki(wydatek) }) {
-            Text("Usuń")
+        Text(
+            text = wydatek.name,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "${wydatek.amount}",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = wydatek.category,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center
+        )
+        IconButton(onClick = { onRemoveWydatki(wydatek) }) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Usuń")
         }
     }
 }
