@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -101,7 +102,8 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     value = nazwa,
                     onValueChange = { nazwa = it },
                     label = { Text("Nazwa") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -112,13 +114,15 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.NumberPassword
                     ),
+                    shape = RoundedCornerShape(20.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = kategoria,
                     onValueChange = { kategoria = it },
                     label = { Text("Kategoria") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row{
