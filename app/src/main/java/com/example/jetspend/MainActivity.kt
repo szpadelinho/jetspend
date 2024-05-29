@@ -80,9 +80,16 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             if(!menuToggle){
                 Text("Jetspend", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                HeaderRow()
+                if(wydatki.isNotEmpty()){
+                    HeaderRow()
+                }
+                else{
+                    Text("Nie posiadasz jeszcze żadnych wpisów.", fontSize = 25.sp, textAlign = TextAlign.Center, lineHeight = 25.sp)
+                }
                 ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
-                FooterRow(suma)
+                if(wydatki.isNotEmpty()){
+                    FooterRow(suma)
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(onClick = { menuToggle = true }) {
                     Text("Dodaj nowy wpis")
@@ -90,14 +97,14 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             }else{
                 Text("Wpisz do kosztorysu", fontSize = 30.sp, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(20.dp))
-                TextField(
+                OutlinedTextField(
                     value = nazwa,
                     onValueChange = { nazwa = it },
                     label = { Text("Nazwa") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TextField(
+                OutlinedTextField(
                     value = kwota,
                     onValueChange = { value -> kwota = value.filter { it.isDigit() } },
                     label = { Text("Kwota") },
@@ -107,7 +114,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                TextField(
+                OutlinedTextField(
                     value = kategoria,
                     onValueChange = { kategoria = it },
                     label = { Text("Kategoria") },
