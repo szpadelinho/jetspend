@@ -38,6 +38,22 @@ class WydatkiViewModel : ViewModel() {
         _wydatki.remove(wydatek)
     }
 
+    fun sortByName() {
+        _wydatki.sortBy { it.name }
+    }
+
+    fun sortByAmount() {
+        _wydatki.sortBy { it.amount }
+    }
+
+    fun sortByCategory() {
+        _wydatki.sortBy { it.category }
+    }
+
+    fun sortById() {
+        _wydatki.sortBy { it.id }
+    }
+
     fun sumWydatki(): Int {
         return _wydatki.sumOf { it.amount }
     }
@@ -74,7 +90,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(8.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -82,7 +98,12 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                 Text("Jetspend", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 if(wydatki.isNotEmpty()){
-                    HeaderRow()
+                    HeaderRow(
+                        onSortByName = { viewModel.sortByName() },
+                        onSortByAmount = { viewModel.sortByAmount() },
+                        onSortByCategory = { viewModel.sortByCategory() },
+                        onSortById = { viewModel.sortById() }
+                    )
                 }
                 else{
                     Text("Nie posiadasz jeszcze żadnych wpisów.", fontSize = 25.sp, textAlign = TextAlign.Center, lineHeight = 25.sp)
@@ -165,34 +186,78 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
 }
 
 @Composable
-fun HeaderRow() {
+fun HeaderRow(
+    onSortByName: () -> Unit,
+    onSortByAmount: () -> Unit,
+    onSortByCategory: () -> Unit,
+    onSortById: () -> Unit
+) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "Nazwa",
+        Column(
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "Kwota",
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = { onSortByName() }
+            ) {
+                Text(
+                    text = "Nazwa",
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp
+                )
+            }
+        }
+        Column(
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "Kategoria",
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = { onSortByAmount() }
+            ) {
+                Text(
+                    text = "Kwota",
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp
+                )
+            }
+        }
+        Column(
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "Usuń",
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = { onSortByCategory() }
+            ) {
+                Text(
+                    text = "Kategoria",
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp
+                )
+            }
+        }
+        Column(
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
-        )
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ){
+            Button(
+                onClick = { onSortById() }
+            ) {
+                Text(
+                    text = "ID",
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp
+                )
+            }
+        }
     }
 }
 
@@ -246,7 +311,10 @@ fun ExpenseItem(wydatek: Wydatki, onRemoveWydatki: (Wydatki) -> Unit) {
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center
         )
-        IconButton(onClick = { onRemoveWydatki(wydatek) }) {
+        IconButton(
+            onClick = { onRemoveWydatki(wydatek) },
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Usuń")
         }
     }
