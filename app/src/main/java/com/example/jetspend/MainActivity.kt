@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,10 +97,14 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if(!menuToggle){
-                Text("Jetspend", fontSize = 40.sp)
+            if (!menuToggle) {
+                Text(
+                    text = "Jetspend",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(20.dp))
-                if(wydatki.isNotEmpty()){
+                if (wydatki.isNotEmpty()) {
                     HeaderRow(
                         onSortByName = { viewModel.sortByName() },
                         onSortByAmount = { viewModel.sortByAmount() },
@@ -106,18 +112,43 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                         onSortById = { viewModel.sortById() }
                     )
                 }
-                else{
-                    Text("Nie posiadasz jeszcze żadnych wpisów.", fontSize = 18.sp, textAlign = TextAlign.Center, lineHeight = 25.sp)
+                Box(modifier = Modifier.weight(1f)) {
+                    if(wydatki.isNotEmpty()){
+                        ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
+                    }
+                    else{
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ){
+                            Text(
+                                "Nie posiadasz jeszcze żadnych wpisów.",
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 25.sp
+                            )
+                        }
+                    }
                 }
-                ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
-                if(wydatki.isNotEmpty()){
+                if (wydatki.isNotEmpty()) {
                     FooterRow(suma)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                Button(onClick = { menuToggle = true }) {
-                    Text("Dodaj nowy wpis")
+                Button(
+                    onClick = { menuToggle = true },
+                    modifier = Modifier.width(500.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+
+                ) {
+                    Text(
+                        text = "Dodaj nowy wpis",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
                 }
-            }else{
+            } else {
                 Text("Wpisz do kosztorysu", fontSize = 30.sp, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
@@ -147,7 +178,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     shape = RoundedCornerShape(20.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Row{
+                Row {
                     Column(
                         modifier = Modifier.padding(10.dp)
                     ) {
@@ -175,8 +206,8 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     }
                     Column(
                         modifier = Modifier.padding(10.dp)
-                    ){
-                        Button(onClick = {menuToggle = false}){
+                    ) {
+                        Button(onClick = { menuToggle = false }) {
                             Text("Wróć")
                         }
                     }
@@ -195,7 +226,8 @@ fun HeaderRow(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .heightIn(max = 60.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -203,7 +235,7 @@ fun HeaderRow(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Button(
                 onClick = { onSortByName() },
                 shape = RoundedCornerShape(0.dp),
@@ -223,7 +255,7 @@ fun HeaderRow(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Button(
                 onClick = { onSortByAmount() },
                 shape = RoundedCornerShape(0.dp),
@@ -243,7 +275,7 @@ fun HeaderRow(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Button(
                 onClick = { onSortByCategory() },
                 shape = RoundedCornerShape(0.dp),
@@ -263,7 +295,7 @@ fun HeaderRow(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Button(
                 onClick = { onSortById() },
                 shape = RoundedCornerShape(0.dp),
@@ -287,9 +319,13 @@ fun FooterRow(suma: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 8.dp)
+            .heightIn(max = 60.dp)
+            .background(Color.Gray)
+            .height(40.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+
     ) {
         Text(
             text = "Łączna suma Twoich wydatków: $suma.",
@@ -301,7 +337,9 @@ fun FooterRow(suma: Int) {
 
 @Composable
 fun ListaWydatkow(wydatki: List<Wydatki>, onRemoveWydatki: (Wydatki) -> Unit) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
         items(wydatki) { wydatek ->
             ExpenseItem(wydatek = wydatek, onRemoveWydatki = onRemoveWydatki)
         }
@@ -317,26 +355,58 @@ fun ExpenseItem(wydatek: Wydatki, onRemoveWydatki: (Wydatki) -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = wydatek.name,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "${wydatek.amount}",
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = wydatek.category,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center
-        )
-        IconButton(
-            onClick = { onRemoveWydatki(wydatek) },
-            modifier = Modifier.weight(1f)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.DarkGray)
+                .height(60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Usuń")
+            Text(
+                text = wydatek.name,
+                textAlign = TextAlign.Center
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.DarkGray)
+                .height(60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "${wydatek.amount}",
+                textAlign = TextAlign.Center
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.DarkGray)
+                .height(60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = wydatek.category,
+                textAlign = TextAlign.Center
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.DarkGray)
+                .height(60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            IconButton(
+                onClick = { onRemoveWydatki(wydatek) },
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Usuń")
+            }
         }
     }
 }
