@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -106,7 +107,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     )
                 }
                 else{
-                    Text("Nie posiadasz jeszcze żadnych wpisów.", fontSize = 25.sp, textAlign = TextAlign.Center, lineHeight = 25.sp)
+                    Text("Nie posiadasz jeszcze żadnych wpisów.", fontSize = 18.sp, textAlign = TextAlign.Center, lineHeight = 25.sp)
                 }
                 ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
                 if(wydatki.isNotEmpty()){
@@ -204,12 +205,17 @@ fun HeaderRow(
             verticalArrangement = Arrangement.Center
         ){
             Button(
-                onClick = { onSortByName() }
+                onClick = { onSortByName() },
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier.width(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                contentPadding = PaddingValues(2.dp)
             ) {
                 Text(
                     text = "Nazwa",
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 )
             }
         }
@@ -219,12 +225,17 @@ fun HeaderRow(
             verticalArrangement = Arrangement.Center
         ){
             Button(
-                onClick = { onSortByAmount() }
+                onClick = { onSortByAmount() },
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier.width(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                contentPadding = PaddingValues(2.dp)
             ) {
                 Text(
                     text = "Kwota",
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 )
             }
         }
@@ -234,12 +245,17 @@ fun HeaderRow(
             verticalArrangement = Arrangement.Center
         ){
             Button(
-                onClick = { onSortByCategory() }
+                onClick = { onSortByCategory() },
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier.width(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                contentPadding = PaddingValues(2.dp)
             ) {
                 Text(
                     text = "Kategoria",
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 )
             }
         }
@@ -249,12 +265,17 @@ fun HeaderRow(
             verticalArrangement = Arrangement.Center
         ){
             Button(
-                onClick = { onSortById() }
+                onClick = { onSortById() },
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier.width(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                contentPadding = PaddingValues(2.dp)
             ) {
                 Text(
                     text = "ID",
                     textAlign = TextAlign.Center,
-                    fontSize = 10.sp
+                    fontSize = 15.sp,
+                    color = Color.White
                 )
             }
         }
