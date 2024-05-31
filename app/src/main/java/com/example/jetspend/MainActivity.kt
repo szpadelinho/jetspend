@@ -31,10 +31,13 @@ data class Wydatki(val id: Int, val name: String, val amount: Int, val category:
 
 class WydatkiViewModel : ViewModel() {
     private var _wydatki = mutableStateListOf<Wydatki>()
+    private var ID = 0
     val wydatki: List<Wydatki> get() = _wydatki
 
     fun addWydatki(wydatek: Wydatki) {
-        _wydatki.add(wydatek)
+        val wydatekWithID = wydatek.copy(id = ID)
+        _wydatki.add(wydatekWithID)
+        ID++
     }
 
     fun removeWydatki(wydatek: Wydatki) {
