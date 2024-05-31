@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +17,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -86,17 +91,26 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
     val wydatki by remember { derivedStateOf { viewModel.wydatki } }
     val suma by remember { derivedStateOf { viewModel.sumWydatki() } }
 
-    var nazwa by remember { mutableStateOf("")}
+    var nazwa by remember { mutableStateOf("") }
     var kwota by remember { mutableStateOf("") }
     var kategoria by remember { mutableStateOf("") }
-    var menuToggle by remember { mutableStateOf(false)}
+    var menuToggle by remember { mutableStateOf(false) }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(8.dp),
+                .padding(8.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -116,14 +130,13 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     )
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    if(wydatki.isNotEmpty()){
+                    if (wydatki.isNotEmpty()) {
                         ListaWydatkow(wydatki = wydatki, onRemoveWydatki = { viewModel.removeWydatki(it) })
-                    }
-                    else{
+                    } else {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
-                        ){
+                        ) {
                             Text(
                                 "Nie posiadasz jeszcze żadnych wpisów.",
                                 fontSize = 18.sp,
@@ -143,7 +156,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
 
-                ) {
+                    ) {
                     Text(
                         text = "Dodaj nowy wpis",
                         color = Color.White,
@@ -158,7 +171,13 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     value = nazwa,
                     onValueChange = { nazwa = it },
                     label = { Text("Nazwa") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (!it.isFocused) {
+                                keyboardController?.hide()
+                            }
+                        },
                     shape = RoundedCornerShape(15.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -166,7 +185,13 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     value = kwota,
                     onValueChange = { value -> kwota = value.filter { it.isDigit() } },
                     label = { Text("Kwota") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (!it.isFocused) {
+                                keyboardController?.hide()
+                            }
+                        },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.NumberPassword
                     ),
@@ -177,7 +202,13 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     value = kategoria,
                     onValueChange = { kategoria = it },
                     label = { Text("Kategoria") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            if (!it.isFocused) {
+                                keyboardController?.hide()
+                            }
+                        },
                     shape = RoundedCornerShape(15.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -187,24 +218,25 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     ) {
                         Button(
                             onClick = {
-                            if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
-                                val amount = kwota.toIntOrNull()
-                                if (amount != null) {
-                                    viewModel.addWydatki(
-                                        Wydatki(
-                                            id = wydatki.size,
-                                            name = nazwa,
-                                            amount = amount,
-                                            category = kategoria
+                                if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
+                                    val amount = kwota.toIntOrNull()
+                                    if (amount != null) {
+                                        viewModel.addWydatki(
+                                            Wydatki(
+                                                id = wydatki.size,
+                                                name = nazwa,
+                                                amount = amount,
+                                                category = kategoria
+                                            )
                                         )
-                                    )
-                                    nazwa = ""
-                                    kwota = ""
-                                    kategoria = ""
-                                    menuToggle = false
+                                        nazwa = ""
+                                        kwota = ""
+                                        kategoria = ""
+                                        menuToggle = false
+                                    }
                                 }
-                            }
-                        },
+                                focusManager.clearFocus()
+                            },
                             shape = RoundedCornerShape(15.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                         ) {
@@ -220,7 +252,10 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                         modifier = Modifier.padding(10.dp)
                     ) {
                         Button(
-                            onClick = { menuToggle = false },
+                            onClick = {
+                                menuToggle = false
+                                focusManager.clearFocus()
+                            },
                             shape = RoundedCornerShape(15.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                         ) {
