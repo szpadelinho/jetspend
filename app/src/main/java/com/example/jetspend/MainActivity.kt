@@ -159,7 +159,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     onValueChange = { nazwa = it },
                     label = { Text("Nazwa") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -170,7 +170,7 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.NumberPassword
                     ),
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -178,14 +178,15 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     onValueChange = { kategoria = it },
                     label = { Text("Kategoria") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(15.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row {
                     Column(
                         modifier = Modifier.padding(10.dp)
                     ) {
-                        Button(onClick = {
+                        Button(
+                            onClick = {
                             if (nazwa.isNotBlank() && kwota.isNotBlank() && kategoria.isNotBlank()) {
                                 val amount = kwota.toIntOrNull()
                                 if (amount != null) {
@@ -203,15 +204,32 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                                     menuToggle = false
                                 }
                             }
-                        }) {
-                            Text("Dodaj")
+                        },
+                            shape = RoundedCornerShape(15.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                        ) {
+                            Text(
+                                text = "Dodaj",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
                         }
                     }
                     Column(
                         modifier = Modifier.padding(10.dp)
                     ) {
-                        Button(onClick = { menuToggle = false }) {
-                            Text("Wróć")
+                        Button(
+                            onClick = { menuToggle = false },
+                            shape = RoundedCornerShape(15.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                        ) {
+                            Text(
+                                text = "Wróć",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp
+                            )
                         }
                     }
                 }
