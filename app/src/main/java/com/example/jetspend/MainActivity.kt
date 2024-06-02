@@ -36,13 +36,13 @@ data class Wydatki(val id: Int, val name: String, val amount: Int, val category:
 
 class WydatkiViewModel : ViewModel() {
     private var _wydatki = mutableStateListOf<Wydatki>()
-    private var ID = 0
+    private var id = 0
     val wydatki: List<Wydatki> get() = _wydatki
 
     fun addWydatki(wydatek: Wydatki) {
-        val wydatekWithID = wydatek.copy(id = ID)
+        val wydatekWithID = wydatek.copy(id = id)
         _wydatki.add(wydatekWithID)
-        ID++
+        id++
     }
 
     fun removeWydatki(wydatek: Wydatki) {
@@ -115,12 +115,13 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!menuToggle) {
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Jetspend",
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 if (wydatki.isNotEmpty()) {
                     HeaderRow(
                         onSortByName = { viewModel.sortByName() },
@@ -141,7 +142,8 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                                 "Nie posiadasz jeszcze żadnych wpisów.",
                                 fontSize = 18.sp,
                                 textAlign = TextAlign.Center,
-                                lineHeight = 25.sp
+                                lineHeight = 25.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -149,7 +151,6 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                 if (wydatki.isNotEmpty()) {
                     FooterRow(suma)
                 }
-                Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = { menuToggle = true },
                     modifier = Modifier.width(500.dp),
@@ -165,7 +166,12 @@ fun ExpenseApp(viewModel: WydatkiViewModel = viewModel()) {
                     )
                 }
             } else {
-                Text("Wpisz do kosztorysu", fontSize = 30.sp, textAlign = TextAlign.Center)
+                Text(
+                    text = "Wpisz do kosztorysu",
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
                     value = nazwa,
@@ -387,6 +393,7 @@ fun FooterRow(suma: Int) {
             text = "Łączna suma Twoich wydatków: $suma.",
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
         )
     }
 }
